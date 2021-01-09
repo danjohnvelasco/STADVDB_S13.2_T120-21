@@ -5,12 +5,14 @@ const Handlebars = require('handlebars');
 const {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-access');
 
 // import routes
-const apiRouter = require('./routes/apiRouter.js');
 const indexRouter = require('./routes/indexRouter.js');
+const apiRouter = require('./routes/apiRouter.js');
+
 
 // create express app
 const app = express();
 const port = 3000;
+
 
 // Setup handlebars
 app.set('view engine', 'hbs'); // Set template 
@@ -29,8 +31,8 @@ app.use(express.urlencoded({ extended: true })); // support encoded bodies
 // Make the following routes available
 app.use('/', indexRouter);
 
-// API endpoints
-app.use('/api', apiRouter);
+app.use('/api', apiRouter)
+
 
 // serve static files 
 app.use(express.static('public'));

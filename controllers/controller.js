@@ -1,7 +1,3 @@
-//Importing the model (database)
-//const PostModel = require('../models/PostModel');
-
-
 // route handlers (CRUD)
 /* THIS IS OLD CODE FOR MONGOOSE
 exports.getPost = function(req, res) {
@@ -16,15 +12,16 @@ exports.getPost = function(req, res) {
 }
 */
 
-/* THIS IS MYSQL AZURE
+// THIS IS MYSQL AZURE
+console.log("controller.js imported");
 const mysql = require('mysql');
 
 var config =
 {
-    host: 'mydemoserver.mysql.database.azure.com',
-    user: 'myadmin@mydemoserver',
-    password: 'your_password',
-    database: 'quickstartdb',
+    host: 'mco1.mysql.database.azure.com',
+    user: 'sandbox@mco1',
+    password: 'P@ssword',
+    database: 'imdb',
     port: 3306,
     ssl: true
 };
@@ -39,11 +36,12 @@ conn.connect(
     }
     else
     {
-       console.log("Connection established.");
-           queryDatabase();
+        console.log("Connection established.");
+        //queryDatabase();
     }
 });
 
+/*
 function queryDatabase(){
     conn.query('DROP TABLE IF EXISTS inventory;', function (err, results, fields) { 
         if (err) throw err; 
