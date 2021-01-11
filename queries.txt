@@ -1,0 +1,95 @@
+1 Table Query
+
+Title: "Movies that are released from [year] to [year] with a genre of [genre]."
+
+SELECT title, genre, year 
+FROM movies 
+WHERE genre LIKE ? 
+AND year BETWEEN ? 
+AND ? 
+ORDER BY year 
+LIMIT ?
+
+Title: "Films from [country] in [Language] language released in [year] to [year]."
+
+SELECT title, country, language, year 
+FROM movies 
+WHERE language LIKE ? 
+AND country LIKE ? 
+AND year BETWEEN ? 
+AND ? 
+ORDER BY year
+
+2 Tables Query
+
+Title: "Best Faces of a Country"
+
+SELECT DISTINCT name, COUNT(names.imdb_name_id) AS "Number of Leading Roles" 
+FROM names 
+JOIN title_principals ON names.imdb_name_id = title_principals.imdb_name_id 
+WHERE title_principals.ordering = 1 
+AND (title_principals.category = "actress" OR title_principals.category = "actor") 
+GROUP BY names.imdb_name_id HAVING COUNT(*) > ? ORDER BY COUNT(names.imdb_name_id) DESC 
+LIMIT ?
+
+
+Title: "Film Performances in a Year"
+
+SELECT DISTINCT m.title, r.weighted_average_vote AS rating 
+FROM movies m 
+INNER JOIN ratings r ON m.imdb_title_id = r.imdb_title_id 
+WHERE m.year = ? 
+AND r.weighted_average_vote BETWEEN ? AND ? 
+ORDER BY rating DESC
+LIMIT ?
+
+3 Tables Query
+
+Title: "Most-casted actors/actresses of a Genre from a Year Interval in a Country"
+
+SELECT n.name AS "Actor/Actress", COUNT(n.name) AS "Number of [Genre] Films casted [Start Year]-[End Year] in [Country]", MAX(m.year) AS "Year of Last [Genre] Movie" 
+FROM movies m 
+RIGHT JOIN title_principals p ON m.imdb_title_id = p.imdb_title_id 
+AND (p.category = "actor" OR p.category = "actress") 
+INNER JOIN names n 
+ON p.imdb_name_id = n.imdb_name_id 
+WHERE m.year >= ? 
+AND m.year <= ? 
+AND m.country LIKE ? 
+AND m.genre LIKE ? 
+GROUP BY n.name 
+ORDER BY COUNT(n.name) DESC, MAX(m.year) DESC, n.name ASC 
+LIMIT ?
+
+Title: "Notable Foreign-born Directors of a Country"
+
+SELECT n.name AS "Director", n.place_of_birth AS "Place of Birth", COUNT(n.name) AS "Number of Films Directed in the USA", MAX(m.year) AS "Year of Last Film" 
+FROM movies m 
+INNER JOIN title_principals p ON m.imdb_title_id = p.imdb_title_id 
+AND p.category = "director" 
+INNER JOIN names n ON p.imdb_name_id = n.imdb_name_id AND n.place_of_birth != "" 
+AND n.place_of_birth NOT LIKE ? 
+WHERE m.country LIKE ? 
+GROUP BY n.name, n.place_of_birth 
+ORDER BY COUNT(n.name) DESC, MAX(m.year) DESC, n.name ASC 
+LIMIT ?
+
+4-6 Tables Query
+
+Title: 
+"Actors/Actresses in the age group of [min age] to [max age] who have casted on a movie from [country] with an average rating from [min rating] to [max rating]."
+
+SELECT n.name AS "Name", t.category AS "Gender", COUNT(t.imdb_name_id) AS "Number of Roles" 
+FROM names n 
+LEFT JOIN title_principals t ON n.imdb_name_id = t.imdb_name_id 
+LEFT JOIN movies m ON t.imdb_title_id = m.imdb_title_id 
+LEFT JOIN ratings r ON m.imdb_title_id = r.imdb_title_id 
+WHERE (t.category = "actor" OR t.category = "actress") 
+AND (YEAR(NOW()) - YEAR(n.date_of_birth) >= ?) 
+AND (YEAR(NOW()) - YEAR(n.date_of_birth) <= ?) 
+AND m.country = ? 
+AND (r.weighted_average_vote >= ?) 
+AND (r.weighted_average_vote <= ?) 
+GROUP BY t.imdb_name_id, t.category 
+ORDER BY n.name 
+LIMIT ?

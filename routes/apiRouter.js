@@ -97,7 +97,7 @@ router.get('/query4', (req, res) => {
     var data = req.query.data;
     var limit = parseInt(data.limit);
     limit = (isNaN(limit)) ? 1073741824 : limit; 
-    conn.query('SELECT DISTINCT m.title, r.weighted_average_vote AS rating FROM movies m CROSS JOIN ratings r ON m.imdb_title_id = r.imdb_title_id WHERE m.year = ? AND r.weighted_average_vote BETWEEN ? AND ? ORDER BY rating DESC LIMIT ?', [parseInt(data.year),parseInt(data.min_avg_vote),parseInt(data.max_avg_vote), limit], 
+    conn.query('SELECT DISTINCT m.title, r.weighted_average_vote AS rating FROM movies m INNER JOIN ratings r ON m.imdb_title_id = r.imdb_title_id WHERE m.year = ? AND r.weighted_average_vote BETWEEN ? AND ? ORDER BY rating DESC LIMIT ?', [parseInt(data.year),parseInt(data.min_avg_vote),parseInt(data.max_avg_vote), limit], 
         function (err, results, fields) {
             if (err) {
                 console.error(err);
@@ -113,7 +113,7 @@ router.get('/query4', (req, res) => {
 
 
 router.get('/query5', (req, res) => {
-    //“Top 10 Most-casted actors/actresses of a Genre from a Year Interval in a Country”
+    //Most-casted actors/actresses of a Genre from a Year Interval in a Country”
     console.log("querying...");
     console.log(req.query.data);
     var data = req.query.data;
@@ -121,7 +121,7 @@ router.get('/query5', (req, res) => {
     var genre = '%' + data.genre + '%';
     var limit = parseInt(data.limit);
     limit = (isNaN(limit)) ? 1073741824 : limit; 
-    conn.query('SELECT n.name AS "Actor/Actress", COUNT(n.name) AS "Number of Romance Films casted from 2010-2020 in USA", MAX(m.year) AS "Year of Last Romance Movie" FROM movies m INNER JOIN title_principals p ON m.imdb_title_id = p.imdb_title_id AND (p.category = "actor" OR p.category = "actress") INNER JOIN names n ON p.imdb_name_id = n.imdb_name_id WHERE m.year >= ? AND m.year <= ? AND m.country LIKE ? AND m.genre LIKE ? GROUP BY n.name ORDER BY COUNT(n.name) DESC, MAX(m.year) DESC, n.name ASC LIMIT ?', [parseInt(data.startYear), parseInt(data.endYear), country, genre, limit], 
+    conn.query(`SELECT n.name AS "Actor/Actress", COUNT(n.name) AS "Number of ${data.genre} Films casted from ${data.startYear}-${data.endYear} in ${data.country}", MAX(m.year) AS "Year of Last ${data.genre} Movie" FROM movies m RIGHT JOIN title_principals p ON m.imdb_title_id = p.imdb_title_id AND (p.category = "actor" OR p.category = "actress") INNER JOIN names n ON p.imdb_name_id = n.imdb_name_id WHERE m.year >= ? AND m.year <= ? AND m.country LIKE ? AND m.genre LIKE ? GROUP BY n.name ORDER BY COUNT(n.name) DESC, MAX(m.year) DESC, n.name ASC LIMIT ?`, [parseInt(data.startYear), parseInt(data.endYear), country, genre, limit], 
         function (err, results, fields) {
             if (err) {
                 console.error(err);
