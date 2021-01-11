@@ -20,32 +20,6 @@ conn.on('connection', function (connection) {
   console.log("connection is made in the pool.");
 });
 
-// establish connection to database
-function connect() {
-  conn.connect(
-      function (err) { 
-      if (err) { 
-          console.log("!!! Cannot connect !!! Error:");
-          throw err;
-      }
-      else
-      {
-          console.log("Connection established.");
-      }
-  });
-}
-
-function disconnect() {
-  conn.end(
-      function (err) { 
-          if (err) throw err;
-          else  console.log('Closing connection.') 
-  });
-}
-
-// Establish connection
-//connect();
-
 router.get('/query1', (req, res) => {
     //“Movies that are released from [year] to [year] with a genre of [genre].”
     console.log("querying...");
