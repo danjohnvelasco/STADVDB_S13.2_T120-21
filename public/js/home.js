@@ -1,28 +1,17 @@
-/* TO RESUE THIS CODE, IT MUST KNOW IF DISCOVER/FOLLOWED
-   initial solution: get state in hidden html input if discover/followed
-   then use that param for api call (ex. /api/getPosts/discover or /api/getPosts/followed)
-*/ 
-
 $(document).ready(() => {
-  var feedmode = $('#mode').val(); // get mode of the newsfeed
-  var finalUrl;
-    if (feedmode === "discover")
-      finalUrl = 'getDiscoverPosts';
-    else if (feedmode === "following")
-      finalUrl = 'getFollowingPosts';
-    else
-      finalUrl = 'getProfilePosts';
+  // Add click event handler
+  $('#btn1').click(function(event) {
+    event.preventDefault(); // prevent refresh
+    readHandler();
+  });
+});
 
-    var url = document.URL;
-    var userId = url.substring(url.lastIndexOf('/') + 1);
-    console.log(userId);
-    console.log(finalUrl);
+function readHandler() {
   $.ajax({
-    url: '/api/' + finalUrl,
+    url: '/api/read',
     method: 'GET',
-    data: {user: userId},
+    //data: {user: userId},
     success: (data, status) => {
-      var gallery = $('.gallery'); 
       // append images to gallery    
       data.forEach((item, index) => {
         addToGallery(item, gallery);
@@ -44,8 +33,7 @@ $(document).ready(() => {
       console.log('error gallery.js');
     }
   });
-});
-
+}
 // Helper functions
 
 /*
