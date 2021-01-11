@@ -1,11 +1,7 @@
 // import dependencies
 const express = require('express');
-const hbs = require('express-handlebars');
-const Handlebars = require('handlebars');
-const {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-access');
 
 // import routes
-const indexRouter = require('./routes/indexRouter.js');
 const apiRouter = require('./routes/apiRouter.js');
 
 
@@ -13,9 +9,6 @@ const apiRouter = require('./routes/apiRouter.js');
 const app = express();
 const port = 3000;
 
-
-// Setup handlebars
-app.set('view engine', 'hbs'); // Set template 
 
 // Setup middlewares
 app.use(express.json()); // support json encoded bodies
@@ -30,10 +23,6 @@ app.use(express.static('public'));
 app.use('/', function(req, res) {
   res.sendFile(__dirname + '/public/index.html');
 });
-
-
-
-
 
 
 // listen on port
