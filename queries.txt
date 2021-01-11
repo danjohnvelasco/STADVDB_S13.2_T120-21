@@ -1,24 +1,24 @@
 1 Table Query
 
-Title: "Movies that are released from [year] to [year] with a genre of [genre]."
+Title: "Movies that are released from a year interval with a specific genre."
 
-SELECT title, genre, year 
-FROM movies 
-WHERE genre LIKE ? 
-AND year BETWEEN ? 
-AND ? 
-ORDER BY year 
-LIMIT ?
-
-Title: "Films from [country] in [Language] language released in [year] to [year]."
-
-SELECT title, country, language, year 
-FROM movies 
-WHERE language LIKE ? 
-AND country LIKE ? 
-AND year BETWEEN ? 
-AND ? 
+SELECT title, genre, year
+FROM movies
+WHERE genre LIKE ‘%genre%’
+AND year >= ‘start year’
+AND year <= ‘end year’
 ORDER BY year
+
+
+Title: "Movies from a country that are released from a year interval in a specific language."
+
+SELECT title, country, language, year
+FROM movies
+WHERE language LIKE ?
+AND country LIKE ?
+AND year >= ?
+AND year <= ?
+
 
 2 Tables Query
 
@@ -49,7 +49,7 @@ Title: "Most-casted actors/actresses of a Genre from a Year Interval in a Countr
 
 SELECT n.name AS "Actor/Actress", COUNT(n.name) AS "Number of [Genre] Films casted [Start Year]-[End Year] in [Country]", MAX(m.year) AS "Year of Last [Genre] Movie" 
 FROM movies m 
-RIGHT JOIN title_principals p ON m.imdb_title_id = p.imdb_title_id 
+INNER JOIN title_principals p ON m.imdb_title_id = p.imdb_title_id 
 AND (p.category = "actor" OR p.category = "actress") 
 INNER JOIN names n 
 ON p.imdb_name_id = n.imdb_name_id 
@@ -77,19 +77,20 @@ LIMIT ?
 4-6 Tables Query
 
 Title: 
-"Actors/Actresses in the age group of [min age] to [max age] who have casted on a movie from [country] with an average rating from [min rating] to [max rating]."
+“Actors/Actresses within an Age Group who’ve starred from films within a Rating Range in a Country”
 
-SELECT n.name AS "Name", t.category AS "Gender", COUNT(t.imdb_name_id) AS "Number of Roles" 
+SELECT n.name AS "Name", t.category AS "Gender", COUNT(t.imdb_name_id) AS leadCount
 FROM names n 
-LEFT JOIN title_principals t ON n.imdb_name_id = t.imdb_name_id 
-LEFT JOIN movies m ON t.imdb_title_id = m.imdb_title_id 
-LEFT JOIN ratings r ON m.imdb_title_id = r.imdb_title_id 
+INNER JOIN title_principals t ON n.imdb_name_id = t.imdb_name_id 
+INNER JOIN movies m ON t.imdb_title_id = m.imdb_title_id 
+INNER JOIN ratings r ON m.imdb_title_id = r.imdb_title_id 
 WHERE (t.category = "actor" OR t.category = "actress") 
+AND (t.ordering = 1)
 AND (YEAR(NOW()) - YEAR(n.date_of_birth) >= ?) 
 AND (YEAR(NOW()) - YEAR(n.date_of_birth) <= ?) 
 AND m.country = ? 
 AND (r.weighted_average_vote >= ?) 
 AND (r.weighted_average_vote <= ?) 
 GROUP BY t.imdb_name_id, t.category 
-ORDER BY n.name 
+ORDER BY leadCount DESC
 LIMIT ?

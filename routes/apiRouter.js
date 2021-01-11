@@ -29,7 +29,7 @@ router.get('/query1', (req, res) => {
     var limit = parseInt(data.limit);
     limit = (isNaN(limit)) ? 1073741824 : limit; 
 
-    conn.query('SELECT title, genre, year FROM movies WHERE genre LIKE ? AND year BETWEEN ? AND ? ORDER BY year LIMIT ?', [genre,parseInt(data.startYear),parseInt(data.endYear), limit], 
+    conn.query('SELECT title, genre, year FROM movies WHERE genre LIKE ? AND year >= ? AND year <= ? ORDER BY year LIMIT ?', [genre,parseInt(data.startYear),parseInt(data.endYear), limit], 
     function (err, results, fields) {
         if (err) {
             console.error(err);
@@ -43,6 +43,7 @@ router.get('/query1', (req, res) => {
     })
 });
 
+
 router.get('/query2', (req, res) => {
     // "Films from [country] in [Language] language released in [year] to [year]."
     console.log("querying...");
@@ -52,7 +53,7 @@ router.get('/query2', (req, res) => {
     var language = '%' + data.language + '%';
     var limit = parseInt(data.limit);
     limit = (isNaN(limit)) ? 1073741824 : limit; 
-    conn.query('SELECT title, country, language, year FROM movies WHERE language LIKE ? AND country LIKE ? AND year BETWEEN ? AND ? ORDER BY year LIMIT ?', [language,country,parseInt(data.startYear),parseInt(data.endYear), limit], 
+    conn.query('SELECT title, country, language, year FROM movies WHERE language LIKE ? AND country LIKE ? AND year >= ? AND year <= ? LIMIT ?', [language,country,parseInt(data.startYear),parseInt(data.endYear), limit], 
         function (err, results, fields) {
             if (err) {
                 console.error(err);
@@ -121,7 +122,7 @@ router.get('/query5', (req, res) => {
     var genre = '%' + data.genre + '%';
     var limit = parseInt(data.limit);
     limit = (isNaN(limit)) ? 1073741824 : limit; 
-    conn.query(`SELECT n.name AS "Actor/Actress", COUNT(n.name) AS "Number of ${data.genre} Films casted from ${data.startYear}-${data.endYear} in ${data.country}", MAX(m.year) AS "Year of Last ${data.genre} Movie" FROM movies m RIGHT JOIN title_principals p ON m.imdb_title_id = p.imdb_title_id AND (p.category = "actor" OR p.category = "actress") INNER JOIN names n ON p.imdb_name_id = n.imdb_name_id WHERE m.year >= ? AND m.year <= ? AND m.country LIKE ? AND m.genre LIKE ? GROUP BY n.name ORDER BY COUNT(n.name) DESC, MAX(m.year) DESC, n.name ASC LIMIT ?`, [parseInt(data.startYear), parseInt(data.endYear), country, genre, limit], 
+    conn.query(`SELECT n.name AS "Actor/Actress", COUNT(n.name) AS "Number of ${data.genre} Films casted from ${data.startYear}-${data.endYear} in ${data.country}", MAX(m.year) AS "Year of Last ${data.genre} Movie" FROM movies m INNER JOIN title_principals p ON m.imdb_title_id = p.imdb_title_id AND (p.category = "actor" OR p.category = "actress") INNER JOIN names n ON p.imdb_name_id = n.imdb_name_id WHERE m.year >= ? AND m.year <= ? AND m.country LIKE ? AND m.genre LIKE ? GROUP BY n.name ORDER BY COUNT(n.name) DESC, MAX(m.year) DESC, n.name ASC LIMIT ?`, [parseInt(data.startYear), parseInt(data.endYear), country, genre, limit], 
         function (err, results, fields) {
             if (err) {
                 console.error(err);
@@ -166,7 +167,7 @@ router.get('/query7', (req, res) => {
     var data = req.query.data;
     var limit = parseInt(data.limit);
     limit = (isNaN(limit)) ? 1073741824 : limit; 
-    conn.query('SELECT n.name AS "Name", t.category AS "Gender", COUNT(t.imdb_name_id) AS "Number of Roles" FROM names n LEFT JOIN title_principals t ON n.imdb_name_id = t.imdb_name_id LEFT JOIN movies m ON t.imdb_title_id = m.imdb_title_id LEFT JOIN ratings r ON m.imdb_title_id = r.imdb_title_id WHERE (t.category = "actor" OR t.category = "actress") AND (YEAR(NOW()) - YEAR(n.date_of_birth) >= ?) AND (YEAR(NOW()) - YEAR(n.date_of_birth) <= ?) AND m.country = ? AND (r.weighted_average_vote >= ?) AND (r.weighted_average_vote <= ?) GROUP BY t.imdb_name_id, t.category ORDER BY n.name LIMIT ?', [parseInt(data.minAge), parseInt(data.maxAge), data.country, parseInt(data.minRating), parseInt(data.maxRating), limit],
+    conn.query('SELECT n.name AS "Name", t.category AS "Gender", COUNT(t.imdb_name_id) AS leadCount FROM names n INNER JOIN title_principals t ON n.imdb_name_id = t.imdb_name_id INNER JOIN movies m ON t.imdb_title_id = m.imdb_title_id  INNER JOIN ratings r ON m.imdb_title_id = r.imdb_title_id WHERE (t.category = "actor" OR t.category = "actress") AND (t.ordering = 1) AND (YEAR(NOW()) - YEAR(n.date_of_birth) >= ?) AND (YEAR(NOW()) - YEAR(n.date_of_birth) <= ?) AND m.country = ? AND (r.weighted_average_vote >= ?) AND (r.weighted_average_vote <= ?) GROUP BY t.imdb_name_id, t.category ORDER BY leadCount DESC LIMIT ?', [parseInt(data.minAge), parseInt(data.maxAge), data.country, parseInt(data.minRating), parseInt(data.maxRating), limit],
         function (err, results, fields) {
             if (err) {
                 console.error(err);
