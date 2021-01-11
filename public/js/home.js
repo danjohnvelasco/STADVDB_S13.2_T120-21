@@ -67,10 +67,12 @@ function queryHandler(data_obj) {
     method: 'GET',
     data: {data: data_obj},
     success: (data, status) => {
-      console.table(data);
+      console.log(data);
       var table = new Tabulator("#table-div", {
           data:data, //assign data to table
           autoColumns:true, //create columns from data field names
+          pagination:"local", //enable local pagination.
+          paginationSize:50, // this option can take any positive integer value
       });
     },
     error: () => {
@@ -88,6 +90,7 @@ function query1_form() {
   var genre = document.createElement('input');
   var startYear = document.createElement('input');
   var endYear = document.createElement('input');
+
 
   // adding attributes
   $(formGroup1).attr('class', 'form-group');
@@ -112,6 +115,16 @@ function query1_form() {
   $('#form-div').append(formGroup1);
   $('#form-div').append(formGroup2);
   $('#form-div').append(formGroup3);
+
+  // Adding LIMIT form input
+  var formGroupLimit = document.createElement('div');
+  $(formGroupLimit).attr('class', 'form-group');
+  var limit = document.createElement('input');
+  $(limit).attr('type', 'number');
+  $(limit).attr('class', 'limit');
+  $(limit).attr('placeholder', 'Limit (optional)');
+  $(formGroupLimit).append(limit);
+  $('#form-div').append(formGroupLimit);
 }
 
 function query2_form() {
@@ -157,6 +170,16 @@ function query2_form() {
   $('#form-div').append(formGroup2);
   $('#form-div').append(formGroup3);
   $('#form-div').append(formGroup4);
+
+  // Adding LIMIT form input
+  var formGroupLimit = document.createElement('div');
+  $(formGroupLimit).attr('class', 'form-group');
+  var limit = document.createElement('input');
+  $(limit).attr('type', 'number');
+  $(limit).attr('class', 'limit');
+  $(limit).attr('placeholder', 'Limit (optional)');
+  $(formGroupLimit).append(limit);
+  $('#form-div').append(formGroupLimit);
 }
 
 function query3_form() {
@@ -177,6 +200,16 @@ function query3_form() {
   $(formGroup1).append(n_leadingroles);
 
   $('#form-div').append(formGroup1);
+
+  // Adding LIMIT form input
+  var formGroupLimit = document.createElement('div');
+  $(formGroupLimit).attr('class', 'form-group');
+  var limit = document.createElement('input');
+  $(limit).attr('type', 'number');
+  $(limit).attr('class', 'limit');
+  $(limit).attr('placeholder', 'Limit (optional)');
+  $(formGroupLimit).append(limit);
+  $('#form-div').append(formGroupLimit);
 }
 
 function query4_form() {
@@ -201,8 +234,8 @@ function query4_form() {
   $(max_avg_vote).attr('class', 'max_avg_vote');
 
   $(year).attr('placeholder', 'Year');
-  $(min_avg_vote).attr('placeholder', 'Min. Avg Vote');
-  $(max_avg_vote).attr('placeholder', 'Max. Avg Vote');
+  $(min_avg_vote).attr('placeholder', 'Min. Avg Vote (min 0)');
+  $(max_avg_vote).attr('placeholder', 'Max. Avg Vote (max 10)');
 
   // appending
   $(formGroup1).append(year);
@@ -212,6 +245,16 @@ function query4_form() {
   $('#form-div').append(formGroup1);
   $('#form-div').append(formGroup2);
   $('#form-div').append(formGroup3);
+
+  // Adding LIMIT form input
+  var formGroupLimit = document.createElement('div');
+  $(formGroupLimit).attr('class', 'form-group');
+  var limit = document.createElement('input');
+  $(limit).attr('type', 'number');
+  $(limit).attr('class', 'limit');
+  $(limit).attr('placeholder', 'Limit (optional)');
+  $(formGroupLimit).append(limit);
+  $('#form-div').append(formGroupLimit);
 }
 
 function query5_form() {
@@ -257,6 +300,16 @@ function query5_form() {
   $('#form-div').append(formGroup2);
   $('#form-div').append(formGroup3);
   $('#form-div').append(formGroup4);
+
+  // Adding LIMIT form input
+  var formGroupLimit = document.createElement('div');
+  $(formGroupLimit).attr('class', 'form-group');
+  var limit = document.createElement('input');
+  $(limit).attr('type', 'number');
+  $(limit).attr('class', 'limit');
+  $(limit).attr('placeholder', 'Limit (optional)');
+  $(formGroupLimit).append(limit);
+  $('#form-div').append(formGroupLimit);
 }
 
 function query6_form() {
@@ -278,6 +331,16 @@ function query6_form() {
   $(formGroup1).append(country);
 
   $('#form-div').append(formGroup1);
+
+  // Adding LIMIT form input
+  var formGroupLimit = document.createElement('div');
+  $(formGroupLimit).attr('class', 'form-group');
+  var limit = document.createElement('input');
+  $(limit).attr('type', 'number');
+  $(limit).attr('class', 'limit');
+  $(limit).attr('placeholder', 'Limit (optional)');
+  $(formGroupLimit).append(limit);
+  $('#form-div').append(formGroupLimit);
 }
 
 function query7_form() {
@@ -316,8 +379,8 @@ function query7_form() {
   $(minAge).attr('placeholder', 'Min. Age');
   $(maxAge).attr('placeholder', 'Max. Age');
   $(country).attr('placeholder', 'Country');
-  $(minRating).attr('placeholder', 'Min. Rating');
-  $(maxRating).attr('placeholder', 'Max. Rating');
+  $(minRating).attr('placeholder', 'Min. Rating (min 0)');
+  $(maxRating).attr('placeholder', 'Max. Rating (max 10)');
 
   // appending
   $(formGroup1).append(country);
@@ -331,4 +394,14 @@ function query7_form() {
   $('#form-div').append(formGroup3);
   $('#form-div').append(formGroup4);
   $('#form-div').append(formGroup5);
+
+  // Adding LIMIT form input
+  var formGroupLimit = document.createElement('div');
+  $(formGroupLimit).attr('class', 'form-group');
+  var limit = document.createElement('input');
+  $(limit).attr('type', 'number');
+  $(limit).attr('class', 'limit');
+  $(limit).attr('placeholder', 'Limit (optional)');
+  $(formGroupLimit).append(limit);
+  $('#form-div').append(formGroupLimit);
 }
