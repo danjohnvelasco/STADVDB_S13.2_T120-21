@@ -199,6 +199,16 @@ function query3_form() {
 
   $('#form-div').append(formGroup1);
 
+  // ADD country input
+  var formGroup2 = document.createElement('div');
+  var country = document.createElement('input');
+  $(formGroup2).attr('class', 'form-group');
+  $(country).attr('type', 'text');
+  $(country).attr('class', 'country');
+  $(country).attr('placeholder', 'Country');
+  $(formGroup2).append(country);
+  $('#form-div').append(formGroup2);
+
   // Adding LIMIT form input
   var formGroupLimit = document.createElement('div');
   $(formGroupLimit).attr('class', 'form-group');
