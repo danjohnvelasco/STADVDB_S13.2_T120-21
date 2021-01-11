@@ -3,7 +3,8 @@ $(document).ready(() => {
   // Add click event handler
   $('#select-form-id').change(function() {
     console.log('render form' + $(this).val());
-    getForm($(this).val());
+    getForm($(this).val()); // empty form div
+    $('#table-div').empty(); // empty table div
   });
 
   $('#query-btn').click(function(event) {
@@ -67,9 +68,10 @@ function queryHandler(data_obj) {
     data: {data: data_obj},
     success: (data, status) => {
       console.table(data);
-      /*
-      data.forEach((item, index) => {
-      });*/
+      var table = new Tabulator("#table-div", {
+          data:data, //assign data to table
+          autoColumns:true, //create columns from data field names
+      });
     },
     error: () => {
       console.log('error requesting from API...');

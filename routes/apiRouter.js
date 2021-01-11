@@ -156,14 +156,12 @@ router.get('/query6', (req, res) => {
 });
 
 
-
 router.get('/query7', (req, res) => {
     //"[Actors/Actresses] in the age group of [min age] to [max age] who have casted on a movie from [country] with an average rating from [min rating] to [max rating]."
     console.log("querying...");
     console.log(req.query.data);
     var data = req.query.data;
-    var country = '%' + data.country + '%';
-    conn.query('SELECT n.name AS "Name", t.category AS "Gender", COUNT(t.imdb_name_id) AS "Number of Roles" FROM names n LEFT JOIN title_principals t ON n.imdb_name_id = t.imdb_name_id LEFT JOIN movies m ON t.imdb_title_id = m.imdb_title_id LEFT JOIN ratings r ON m.imdb_title_id = r.imdb_title_id WHERE (t.category = "actor" OR t.category = "actress") AND (YEAR(NOW() - YEAR(n.date_of_birth) >= ?)) AND (YEAR(NOW() - YEAR(n.date_of_birth) <= ?)) AND m.country = ? AND (r.weighted_average_vote >= ?) AND (r.weighted_average_vote <= ?) GROUP BY t.imdb_name_id, t.category ORDER BY n.name', [parseInt(data.minAge), parseInt(data.maxAge), country, parseInt(data.minRating), parseInt(data.maxRating)],
+    conn.query('SELECT n.name AS "Name", t.category AS "Gender", COUNT(t.imdb_name_id) AS "Number of Roles" FROM names n LEFT JOIN title_principals t ON n.imdb_name_id = t.imdb_name_id LEFT JOIN movies m ON t.imdb_title_id = m.imdb_title_id LEFT JOIN ratings r ON m.imdb_title_id = r.imdb_title_id WHERE (t.category = "actor" OR t.category = "actress") AND (YEAR(NOW()) - YEAR(n.date_of_birth) >= ?) AND (YEAR(NOW()) - YEAR(n.date_of_birth) <= ?) AND m.country = ? AND (r.weighted_average_vote >= ?) AND (r.weighted_average_vote <= ?) GROUP BY t.imdb_name_id, t.category ORDER BY n.name', [parseInt(data.minAge), parseInt(data.maxAge), data.country, parseInt(data.minRating), parseInt(data.maxRating)],
         function (err, results, fields) {
             if (err) throw err;
             else console.log('Selected ' + results.length + ' row(s).');
