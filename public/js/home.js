@@ -2,7 +2,6 @@ $(document).ready(() => {
   console.log("home.js imported")
   // Add click event handler
   $('#select-form-id').change(function() {
-    console.log('render form' + $(this).val());
     getForm($(this).val()); // empty form div
     $('#table-div').empty(); // empty table div
   });
@@ -67,7 +66,6 @@ function queryHandler(data_obj) {
     method: 'GET',
     data: {data: data_obj},
     success: (data, status) => {
-      console.log(data);
       var table = new Tabulator("#table-div", {
           data:data, //assign data to table
           autoColumns:true, //create columns from data field names
