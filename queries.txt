@@ -1,96 +1,34 @@
-1 Table Query
+## Roll-up
 
-Title: "Movies that are released from a year interval with a specific genre."
+SELECT sl.seller_state AS “State”, p.product_category_name AS “Product Category”, sl.seller_id AS “Seller ID”, sum(s.total_sales) AS “Total Sales”
+FROM sellers sl INNER JOIN sales s ON sl.seller_id = s.seller_id
+	INNER JOIN products p ON s.product_id = p.product_id
+GROUP BY ROLLUP(sl.seller_state, p.product_category, sl.seller_id)
 
-SELECT title, genre, year
-FROM movies
-WHERE genre LIKE ‘%genre%’
-AND year >= ‘start year’
-AND year <= ‘end year’
-ORDER BY year
+## Drill-down
 
+SELECT p.product_category_name AS "Product Category", QUARTER(s.order_approved_at) AS "QUARTER", c.customer_state AS "STATE", c.customer_city  AS "CITY" sum(s.total_sales) AS "Total Sales"
+FROM sales s
+JOIN products p ON s.product_id = p.product_id
+JOIN customers c ON s.customer_id = c.customer_id
+GROUP BY p.product_category_name, QUARTER(s.order_approved_at), c.customer_state, c.customer_city 
+WITH ROLLUP;
 
-Title: "Movies from a country that are released from a year interval in a specific language."
+## Slice
 
-SELECT title, country, language, year
-FROM movies
-WHERE language LIKE ?
-AND country LIKE ?
-AND year >= ?
-AND year <= ?
+SELECT QUARTER(s.order_approved_at) AS “quarter”, p.product_category_name AS “product category”, SUM(s.total_sales) AS “total sales”
+FROM sales s 
+JOIN products p ON s.product_id = p.product_id
+WHERE QUARTER(s.order_approved_by) = X
+GROUP BY QUARTER(s.order_approved_by), p.product_category_name
 
+## Dice
 
-2 Tables Query
-
-Title: "Best Faces of a Country"
-
-SELECT DISTINCT name, COUNT(names.imdb_name_id) AS "Number of Leading Roles" 
-FROM names 
-JOIN title_principals ON names.imdb_name_id = title_principals.imdb_name_id 
-WHERE title_principals.ordering = 1 
-AND (title_principals.category = "actress" OR title_principals.category = "actor") 
-GROUP BY names.imdb_name_id HAVING COUNT(*) > ? ORDER BY COUNT(names.imdb_name_id) DESC 
-LIMIT ?
-
-
-Title: "Film Performances in a Year"
-
-SELECT DISTINCT m.title, r.weighted_average_vote AS rating 
-FROM movies m 
-INNER JOIN ratings r ON m.imdb_title_id = r.imdb_title_id 
-WHERE m.year = ? 
-AND r.weighted_average_vote BETWEEN ? AND ? 
-ORDER BY rating DESC
-LIMIT ?
-
-3 Tables Query
-
-Title: "Most-casted actors/actresses of a Genre from a Year Interval in a Country"
-
-SELECT n.name AS "Actor/Actress", COUNT(n.name) AS "Number of [Genre] Films casted [Start Year]-[End Year] in [Country]", MAX(m.year) AS "Year of Last [Genre] Movie" 
-FROM movies m 
-INNER JOIN title_principals p ON m.imdb_title_id = p.imdb_title_id 
-AND (p.category = "actor" OR p.category = "actress") 
-INNER JOIN names n 
-ON p.imdb_name_id = n.imdb_name_id 
-WHERE m.year >= ? 
-AND m.year <= ? 
-AND m.country LIKE ? 
-AND m.genre LIKE ? 
-GROUP BY n.name 
-ORDER BY COUNT(n.name) DESC, MAX(m.year) DESC, n.name ASC 
-LIMIT ?
-
-Title: "Notable Foreign-born Directors of a Country"
-
-SELECT n.name AS "Director", n.place_of_birth AS "Place of Birth", COUNT(n.name) AS "Number of Films Directed in the USA", MAX(m.year) AS "Year of Last Film" 
-FROM movies m 
-INNER JOIN title_principals p ON m.imdb_title_id = p.imdb_title_id 
-AND p.category = "director" 
-INNER JOIN names n ON p.imdb_name_id = n.imdb_name_id AND n.place_of_birth != "" 
-AND n.place_of_birth NOT LIKE ? 
-WHERE m.country LIKE ? 
-GROUP BY n.name, n.place_of_birth 
-ORDER BY COUNT(n.name) DESC, MAX(m.year) DESC, n.name ASC 
-LIMIT ?
-
-4-6 Tables Query
-
-Title: 
-“Actors/Actresses within an Age Group who’ve starred from films within a Rating Range in a Country”
-
-SELECT n.name AS "Name", t.category AS "Gender", COUNT(t.imdb_name_id) AS leadCount
-FROM names n 
-INNER JOIN title_principals t ON n.imdb_name_id = t.imdb_name_id 
-INNER JOIN movies m ON t.imdb_title_id = m.imdb_title_id 
-INNER JOIN ratings r ON m.imdb_title_id = r.imdb_title_id 
-WHERE (t.category = "actor" OR t.category = "actress") 
-AND (t.ordering = 1)
-AND (YEAR(NOW()) - YEAR(n.date_of_birth) >= ?) 
-AND (YEAR(NOW()) - YEAR(n.date_of_birth) <= ?) 
-AND m.country = ? 
-AND (r.weighted_average_vote >= ?) 
-AND (r.weighted_average_vote <= ?) 
-GROUP BY t.imdb_name_id, t.category 
-ORDER BY leadCount DESC
-LIMIT ?
+`SELECT customer_state, product_category_name, SUM(unit_sales) AS “unit_sales”
+FROM sales 
+JOIN products ON product_id
+JOIN orders ON order_id
+JOIN customers ON customer_id
+WHERE order_status = “delivered” AND product_category = “X”
+AND (state = “Y” OR state = “Z”)
+GROUP BY state, product_category_name
