@@ -53,7 +53,7 @@ GROUP BY QUARTER(s.order_approved_by), p.product_category_name
 ## Dice
 
 ```
-`SELECT customer_state, product_category_name, SUM(unit_sales) AS "unit_sales"
+SELECT customer_state, product_category_name, SUM(unit_sales) AS "unit_sales"
 FROM sales
 JOIN products ON product_id
 JOIN orders ON order_id
