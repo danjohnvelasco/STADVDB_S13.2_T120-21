@@ -1,13 +1,24 @@
 var states = [];
+var cities = [];
 
 $(document).ready(() => {
-  $('.js-data-example-ajax').hide();
+  // Get states
   $.ajax({
     url: "/api/getUniqueStates",
     method: "GET",
     success: (data, status) => {
       console.log(data);
       states = data.results;
+    }
+  })
+
+  // Get cities
+  $.ajax({
+    url: "/api/getUniqueCities",
+    method: "GET",
+    success: (data, status) => {
+      console.log(data);
+      cities = data.results;
     }
   })
   
@@ -111,47 +122,44 @@ function query2_form() {
   $('#form-div').append('<label>Select a year:</label> <select id="year"> <option selected>year</option> <option value="2016">2016</option> <option value="2017"> 2017 </option> <option value="2018"> 2018 </option> </select>');
 }
 
+function query3_form() {
+  $('#form-div').append('<label>Select a city:</label> <select id="city" class="select2-cities" style="width: 200px;"></select> <br>');
+  
+  $('.select2-cities').select2({
+        data: cities
+  });
+
+  $('#form-div').append('<label>Select a year:</label> <select id="year"> <option selected>year</option> <option value="2016">2016</option> <option value="2017"> 2017 </option> <option value="2018"> 2018 </option> </select>');
+}
+
 function query4_form() {
-  // DOM Creation
-  var formGroup1 = document.createElement('div');
-  var formGroup2 = document.createElement('div');
-  var formGroup3 = document.createElement('div');
-  var year = document.createElement('input');
-  var min_avg_vote = document.createElement('input');
-  var max_avg_vote = document.createElement('input');
+  // year
+  $('#form-div').append('<label>Select a year:</label> <select id="year"> <option selected>year</option> <option value="2016">2016</option> <option value="2017"> 2017 </option> <option value="2018"> 2018 </option> </select> <br>');
 
-  // adding attributes
-  $(formGroup1).attr('class', 'form-group');
-  $(formGroup2).attr('class', 'form-group');
-  $(formGroup3).attr('class', 'form-group');
-  $(year).attr('type', 'text');
-  $(min_avg_vote).attr('type', 'text');
-  $(max_avg_vote).attr('type', 'text');
+  // city 1
+  $('#form-div').append('<label>Select city A:</label> <select id="city" class="select2-cities-A" style="width: 200px;"></select> <br>');
+  $('.select2-cities-A').select2({
+        data: cities
+  });
 
-  $(year).attr('class', 'year');
-  $(min_avg_vote).attr('class', 'min_avg_vote');
-  $(max_avg_vote).attr('class', 'max_avg_vote');
+  // city 2
+  $('#form-div').append('<label>Select city B:</label> <select id="city" class="select2-cities-B" style="width: 200px;"></select> <br>');
+  $('.select2-cities-B').select2({
+        data: cities
+  });
+  
+  // product category A
+   $('#form-div').append('<label>Select product category A:</label> <select id="productA" class="select2-product-A" style="width: 200px;"></select> <br>');
 
-  $(year).attr('placeholder', 'Year');
-  $(min_avg_vote).attr('placeholder', 'Min. Avg Vote (min 0)');
-  $(max_avg_vote).attr('placeholder', 'Max. Avg Vote (max 10)');
+  // product category B
+  $('#form-div').append('<label>Select product category B:</label> <select id="productB" class="select2-product-B" style="width: 200px;"></select> <br>');
 
-  // appending
-  $(formGroup1).append(year);
-  $(formGroup2).append(min_avg_vote);
-  $(formGroup3).append(max_avg_vote);
+  // quarter A
+  $('#form-div').append('<label>Select quarter A:</label> <select id="quarterA"> <option selected>quarter A</option> <option value="1">1</option> <option value="2"> 2 </option> <option value="3"> 3 </option> <option value="4"> 4 </option> </select> <br>');
 
-  $('#form-div').append(formGroup1);
-  $('#form-div').append(formGroup2);
-  $('#form-div').append(formGroup3);
+  // quarter B
+  $('#form-div').append('<label>Select quarter B:</label> <select id="quarterB"> <option selected>quarter B</option> <option value="1">1</option> <option value="2"> 2 </option> <option value="3"> 3 </option> <option value="4"> 4 </option> </select> <br>');
+  
 
-  // Adding LIMIT form input
-  var formGroupLimit = document.createElement('div');
-  $(formGroupLimit).attr('class', 'form-group');
-  var limit = document.createElement('input');
-  $(limit).attr('type', 'number');
-  $(limit).attr('class', 'limit');
-  $(limit).attr('placeholder', 'Limit (optional)');
-  $(formGroupLimit).append(limit);
-  $('#form-div').append(formGroupLimit);
+
 }

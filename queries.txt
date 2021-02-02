@@ -25,6 +25,15 @@ WITH ROLLUP;
 
 
 ## Slice
+SELECT c.customer_city AS "City", QUARTER(o.order_purchase_timestamp) AS "Quarter Of Purchase", p.product_category_name AS "Product Category", sum(s.unit_sales) AS "Unit Sales"
+FROM customers c 
+INNER JOIN sales s ON c.customer_id = s.customer_id
+INNER JOIN products p ON s.product_id = p.product_id
+INNER JOIN orders o ON s.order_id = o.order_id
+WHERE YEAR(o.order_purchase_timestamp) = ?
+AND c.customer_city = ?
+GROUP BY c.customer_city, QUARTER(o.order_purchase_timestamp), p.product_category_name
+WITH ROLLUP;
 
 
 
