@@ -1,7 +1,11 @@
+// Global variables filled by ajax calls on document.ready
 var states = [];
 var cities = [];
+var products = [];
 
 $(document).ready(() => {
+  $("#msg-querying").hide();
+  $("#msg-success").hide();
   // Get states
   $.ajax({
     url: "/api/getUniqueStates",
@@ -19,6 +23,16 @@ $(document).ready(() => {
     success: (data, status) => {
       console.log(data);
       cities = data.results;
+    }
+  })
+
+  // Get products
+  $.ajax({
+    url: "/api/getUniqueProdCats",
+    method: "GET",
+    success: (data, status) => {
+      console.log(data);
+      products = data.results;
     }
   })
   
@@ -86,6 +100,7 @@ function getForm(formID) {
 
 function queryHandler(data_obj) {
   var queryURL = $('#select-form-id').val();
+  $("#msg-querying").show();
   $.ajax({
     url: '/api/' + queryURL,
     method: 'GET',
@@ -97,6 +112,9 @@ function queryHandler(data_obj) {
           pagination:"local", //enable local pagination.
           paginationSize:50, // this option can take any positive integer value
       });
+      $("#msg-querying").hide();
+      $("#msg-success").show();
+      setTimeout(() => {  $("#msg-success").hide(); }, 5000);
     },
     error: () => {
       console.log('error requesting from API...');
@@ -136,23 +154,29 @@ function query4_form() {
   // year
   $('#form-div').append('<label>Select a year:</label> <select id="year"> <option selected>year</option> <option value="2016">2016</option> <option value="2017"> 2017 </option> <option value="2018"> 2018 </option> </select> <br>');
 
-  // city 1
-  $('#form-div').append('<label>Select city A:</label> <select id="city" class="select2-cities-A" style="width: 200px;"></select> <br>');
+  // city A
+  $('#form-div').append('<label>Select city A:</label> <select id="cityA" class="select2-cities-A" style="width: 200px;"></select> <br>');
   $('.select2-cities-A').select2({
         data: cities
   });
 
-  // city 2
-  $('#form-div').append('<label>Select city B:</label> <select id="city" class="select2-cities-B" style="width: 200px;"></select> <br>');
+  // city B
+  $('#form-div').append('<label>Select city B:</label> <select id="cityB" class="select2-cities-B" style="width: 200px;"></select> <br>');
   $('.select2-cities-B').select2({
         data: cities
   });
   
   // product category A
-   $('#form-div').append('<label>Select product category A:</label> <select id="productA" class="select2-product-A" style="width: 200px;"></select> <br>');
+  $('#form-div').append('<label>Select product category A:</label> <select id="productA" class="select2-product-A" style="width: 200px"></select> <br>');
+  $('.select2-product-A').select2({
+       data: products
+  });
 
   // product category B
   $('#form-div').append('<label>Select product category B:</label> <select id="productB" class="select2-product-B" style="width: 200px;"></select> <br>');
+  $('.select2-product-B').select2({
+       data: products
+  });
 
   // quarter A
   $('#form-div').append('<label>Select quarter A:</label> <select id="quarterA"> <option selected>quarter A</option> <option value="1">1</option> <option value="2"> 2 </option> <option value="3"> 3 </option> <option value="4"> 4 </option> </select> <br>');
