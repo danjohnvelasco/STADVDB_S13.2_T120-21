@@ -114,7 +114,7 @@ function queryHandler(data_obj) {
       });
       $("#msg-querying").hide();
       $("#msg-success").show();
-      setTimeout(() => {  $("#msg-success").hide(); }, 5000);
+      setTimeout(() => {  $("#msg-success").hide(); }, 3000);
     },
     error: () => {
       console.log('error requesting from API...');
