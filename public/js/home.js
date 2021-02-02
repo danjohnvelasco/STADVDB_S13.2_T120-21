@@ -1,4 +1,17 @@
+var states = [];
+
 $(document).ready(() => {
+  $('.js-data-example-ajax').hide();
+  $.ajax({
+    url: "/api/getUniqueStates",
+    method: "GET",
+    success: (data, status) => {
+      console.log(data);
+      states = data.results;
+    }
+  })
+  
+
   console.log("home.js imported")
   // Add click event handler
   $('#select-form-id').change(function() {
@@ -20,6 +33,7 @@ function getFormInput() {
   $("form#form-div :input").each(function(){
     var key = $(this).attr("id"); 
     var val = $(this).val(); 
+    console.log(val);
     obj[key] = val
   });
 
@@ -79,26 +93,22 @@ function queryHandler(data_obj) {
   });
 }
 
+
+
 // Helper functions
-function query3_form() {
-  // DOM Creation
-  var formGroup1 = document.createElement('div');
-  var quarter = document.createElement('input');
+function query1_form() {
+  $('#form-div').append('<select id="year" class="custom-select custom-select-lg mb-3"> <option selected>Select year</option> <option value="2016">2016</option> <option value="2017"> 2017 </option> <option value="2018"> 2018 </option> </select>');
+}
 
-  // adding attributes
-  $(formGroup1).attr('class', 'form-group');
+// Helper functions
+function query2_form() {
+  $('#form-div').append('<label>Select a state:</label> <select id="state" class="js-data-example-ajax" style="width: 200px;"></select> <br>');
+  
+  $('.js-data-example-ajax').select2({
+        data: states
+  });
 
-  $(quarter).attr('type', 'text');
-
-  $(quarter).attr('id', 'quarter');
-  $(quarter).attr('class', 'form-control');
-
-  $(quarter).attr('placeholder', 'Quarter (choose a value from 1-4)');
-
-  // appending
-  $(formGroup1).append(quarter);
-
-  $('#form-div').append(formGroup1);
+  $('#form-div').append('<label>Select a year:</label> <select id="year"> <option selected>year</option> <option value="2016">2016</option> <option value="2017"> 2017 </option> <option value="2018"> 2018 </option> </select>');
 }
 
 function query4_form() {

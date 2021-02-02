@@ -23,43 +23,39 @@
 ## Roll-up
 
 ```
-SELECT sl.seller_state AS "State", p.product_category_name AS "Product Category", sl.seller_id AS "Seller ID", sum(s.unit_sales) AS "Total Unit Sales"
-FROM sellers sl INNER JOIN sales s ON sl.seller_id = s.seller_id
+SELECT c.customer_state AS "State", QUARTER(o.order_purchase_timestamp) AS "Quarter Of Purchase", p.product_category_name AS "Product Category", sum(s.unit_sales) AS "Unit Sales"
+FROM customers c
+INNER JOIN sales s ON c.customer_id = s.customer_id
 INNER JOIN products p ON s.product_id = p.product_id
-GROUP BY sl.seller_state, p.product_category_name, sl.seller_id
+INNER JOIN orders o ON s.order_id = o.order_id
+WHERE YEAR(o.order_purchase_timestamp) = ?
+GROUP BY c.customer_state, QUARTER(o.order_purchase_timestamp), p.product_category_name
 WITH ROLLUP
+ORDER BY c.customer_state ASC, QUARTER(o.order_purchase_timestamp) ASC, sum(s.unit_sales) DESC;
 ```
 
 ## Drill-down
 
 ```
-SELECT p.product_category_name AS "Product Category", QUARTER(s.order_approved_at) AS "QUARTER", c.customer_state AS "STATE", c.customer_city  AS "CITY", sum(s.unit_sales) AS "Total Unit Sales"
-FROM sales s
-JOIN products p ON s.product_id = p.product_id
-JOIN customers c ON s.customer_id = c.customer_id
-GROUP BY p.product_category_name, QUARTER(s.order_approved_at), c.customer_state, c.customer_city
+SELECT c.customer_city AS "City", MONTH(o.order_purchase_timestamp) AS "Month Of Purchase", p.product_category_name AS "Product Category", sum(s.unit_sales) AS "Unit Sales"
+FROM customers c
+INNER JOIN sales s ON c.customer_id = s.customer_id
+INNER JOIN products p ON s.product_id = p.product_id
+INNER JOIN orders o ON s.order_id = o.order_id
+WHERE c.customer_state = ?
+AND YEAR(o.order_purchase_timestamp) = ?
+GROUP BY c.customer_city, MONTH(o.order_purchase_timestamp), p.product_category_name
 WITH ROLLUP;
 ```
 
 ## Slice
 
 ```
-SELECT QUARTER(s.order_approved_at) AS "quarter", p.product_category_name AS "product category", SUM(s.total_sales) AS "total sales"
-FROM sales s
-JOIN products p ON s.product_id = p.product_id
-WHERE QUARTER(s.order_approved_at) = ?
-GROUP BY QUARTER(s.order_approved_at), p.product_category_name
+
 ```
 
 ## Dice
 
 ```
-SELECT customer_state, product_category_name, SUM(unit_sales) AS "unit_sales"
-FROM sales
-JOIN products ON product_id
-JOIN orders ON order_id
-JOIN customers ON customer_id
-WHERE order_status = "delivered" AND product_category = "X"
-AND (state = "Y" OR state = "Z")
-GROUP BY state, product_category_name
+
 ```
